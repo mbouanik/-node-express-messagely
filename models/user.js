@@ -124,16 +124,17 @@ class User {
       `SELECT id, to_username, body, sent_at, read_at FROM messages WHERE from_username = $1`,
       [username],
     );
-    const messages = result.rows.map(async (r) => {
-      return {
-        id: r.id,
-        body: r.body,
-        sent_at: r.sent_at,
-        read,
-        at: r.read_at,
-        to_username: await User.get(r.to_username),
-      };
-    });
+    const messages = Promise.all(
+      result.rows.map(async (r) => {
+        return {
+          id: r.id,
+          body: r.body,
+          sent_at: r.sent_at,
+          read_at: r.read_at,
+          to_username: await User.get(r.to_username),
+        };
+      }),
+    );
     return messages;
   }
 
@@ -150,16 +151,17 @@ class User {
       `SELECT id, from_username, body, sent_at, read_at FROM messages WHERE to_username = $1`,
       [username],
     );
-    const messages = result.rows.map(async (r) => {
-      return {
-        id: r.id,
-        body: r.body,
-        sent_at: r.sent_at,
-        read,
-        at: r.read_at,
-        from_username: await User.get(r.to_username),
-      };
-    });
+    const messages = Promise.all(
+      result.rows.map(async (r) => {
+        return {
+          id: r.id,
+          body: r.body,
+          sent_at: r.sent_at,
+          read_at: r.read_at,
+          from_username: await User.get(r.to_username),
+        };
+      }),
+    );
     return messages;
   }
 }

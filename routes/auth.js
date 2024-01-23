@@ -27,11 +27,12 @@ router.post("/register", async (req, res, next) => {
 router.post("/login", async (req, res, next) => {
   try {
     const { username, password } = req.body;
+
     const user = await User.get(username);
-    let token = await User.authenticate(username, password);
+    const token = await User.authenticate(username, password);
     user.last_login_at = new Date();
     await user.updateLoginTimestamp();
-    return res.json({ username, _token: token });
+    return res.json({ token });
   } catch (e) {
     next(e);
   }
